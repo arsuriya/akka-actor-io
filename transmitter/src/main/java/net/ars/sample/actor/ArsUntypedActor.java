@@ -41,18 +41,18 @@ public abstract class ArsUntypedActor extends UntypedActor {
     	return child;
     }
 	
-    protected void checkMaxChildren(int maxChildrenExpected) {
+    protected void checkMaxChildren(final int maxChildrenExpected) {
     	int numChildrenActual = getContext().children().size();
     	if(numChildrenActual > maxChildrenExpected) {
     		logger.error(getSelf().path() + " has " + numChildrenActual + " while we expected no more than " + maxChildrenExpected);
     	}
     }
     
-    protected void scheduleHealthCheck() {
-    	getContext().system().scheduler().schedule(Duration.create(childCheckIntervalDurationMs, TimeUnit.MILLISECONDS), 
-    			Duration.create(childCheckIntervalDurationMs, TimeUnit.MILLISECONDS),
-    			getSelf(),
-                Message.HEALTH_CHECK,
+    protected void scheduleRecurringMessage(final int interval, final TimeUnit timeUnit, final Message msg, final ActorRef rcvr) {
+    	getContext().system().scheduler().schedule(Duration.create(interval, timeUnit), 
+    			Duration.create(interval, timeUnit),
+    			rcvr,
+                msg,
                 getContext().system().dispatcher(), 
                 getSelf()
                 );
@@ -61,7 +61,7 @@ public abstract class ArsUntypedActor extends UntypedActor {
     public void handleMessage(Object msg) {
     	if(msg instanceof Message) {
 			Message message = (Message)msg;
-			switch(message) {
+			switch(message.getType()) {
 				case HEALTH_CHECK:
 					checkMaxChildren(maxNumChildren);
 					break;
@@ -72,5 +72,22 @@ public abstract class ArsUntypedActor extends UntypedActor {
 			ActorRef deadActorRef = ((Terminated)msg).getActor();
 			logger.warn("Actor died : " + deadActorRef.path());
 		}
+    }
+    
+    protected void debug(String msg, Object... args) {
+    	logger.debug(prefixActorPath(msg), args);
+    }
+    protected void info(String msg, Object... args) {
+    	logger.info(prefixActorPath(msg), args);
+    }
+    protected void warn(String msg, Object... args) {
+    	logger.warn(prefixActorPath(msg), args);
+    }
+    protected void error(String msg, Object... args) {
+    	logger.error(prefixActorPath(msg), args);
+    }
+    
+    private String prefixActorPath(final String msg) {
+    	return "[" + this.getSelf().path() + "] " + msg;
     }
 }

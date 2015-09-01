@@ -1,14 +1,13 @@
 package net.ars.sample.actor;
 
-
-public class Worker extends ArsUntypedActor {
+public class MonitorManager extends ArsUntypedSupervisorActor {
 
 	@Override
 	public void onReceive(final Object msg) throws Exception {
 		if(msg instanceof Message) {
 			Message message = (Message)msg;
-			switch(message) {
-				case START_WORK:
+			switch(message.getType()) {
+				case MONITORED_EVENT:
 					work();
 				break;
 				
@@ -20,14 +19,11 @@ public class Worker extends ArsUntypedActor {
 		}
 	}
 	
-	
 	private void work() throws Exception {
 		// complete work
 		Thread.sleep(10);
-		// tell parent to track progress - 50% completion, 100% completion for example 
-		for(int count = 0; count < 2; count++) {
-			getContext().parent().tell(Message.WORK_FINISHED, getSelf());
-		}
+		
+		//getContext().parent().tell(Message.WORK_FINISHED, getSelf());
 	}
 	
 }
