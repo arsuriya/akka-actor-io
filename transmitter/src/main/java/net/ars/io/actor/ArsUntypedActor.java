@@ -2,6 +2,8 @@ package net.ars.io.actor;
 
 import java.util.concurrent.TimeUnit;
 
+import net.ars.io.Message;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

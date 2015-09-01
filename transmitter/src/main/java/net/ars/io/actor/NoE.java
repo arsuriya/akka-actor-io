@@ -1,5 +1,6 @@
 package net.ars.io.actor;
 
+import net.ars.io.Message;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import akka.actor.ActorRef;
@@ -23,6 +24,7 @@ public class NoE extends ArsUntypedSupervisorActor {
 		this.maxNumChildren = appConfig.getInt("num-devices");
 		this.maxEventsToProcess = appConfig.getInt("max-events");
 		this.deviceEventGenerateDuration = appConfig.getInt("device-event-duration-us");
+		
 		this.processedEventCounter = processedEventCounter;
 	}
 	
@@ -67,7 +69,8 @@ public class NoE extends ArsUntypedSupervisorActor {
 		
 		for(int count = 0; count < maxNumChildren; count++) {
 			String deviceId = "device-" + (count+1);
-			createAndWatchChildActor(Props.create(Device.class, deviceId, deviceEventGenerateDuration, monitor), deviceId);
+			createAndWatchChildActor(Props.create(Device.class, deviceId, 
+					deviceEventGenerateDuration, monitor), deviceId);
 		}
 	}
 

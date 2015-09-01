@@ -1,17 +1,19 @@
 package net.ars.server.resource;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
 
 @Path("/service/ok")
-@Consumes(MediaType.APPLICATION_JSON)
 public class OkResource {
 	private long processDelayMs;
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	public OkResource(final long processDelay) {
         this.processDelayMs = processDelay;
@@ -26,9 +28,10 @@ public class OkResource {
     
     @POST
     @Timed
-    public String accept() throws Exception {
+    public Response accept(String reqBody) throws Exception {
+    	logger.error("In POST - request body [" + reqBody + "] delay would be [" + processDelayMs + "]");
     	processDelay();
-    	return "Ok - " + System.nanoTime();
+    	return Response.accepted().build();
     }
     
     private void processDelay() throws Exception {

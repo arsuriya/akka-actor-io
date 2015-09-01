@@ -1,5 +1,7 @@
 package net.ars.io.actor;
 
+import net.ars.io.Message;
+
 public class MonitorManager extends ArsUntypedSupervisorActor {
 
 	@Override

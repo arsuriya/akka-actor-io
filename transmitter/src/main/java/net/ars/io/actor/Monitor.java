@@ -1,14 +1,21 @@
 package net.ars.io.actor;
 
+import net.ars.io.Callback;
+import net.ars.io.Message;
+import net.ars.io.client.ReceiverRestClient;
+import akka.actor.ActorRef;
+
 import com.typesafe.config.Config;
 
 public class Monitor extends ArsUntypedActor {
 	private final int maxEventsToProcess;
 	private int eventCount = 0;
 	private long startNs, endNs;
+	private ReceiverRestClient receiverRestClient;
 	
-	public Monitor(Config appConfig) {
+	public Monitor(Config appConfig, ReceiverRestClient receiverRestClient) {
 		this.maxEventsToProcess = appConfig.getInt("max-events");
+		this.receiverRestClient = receiverRestClient;
 	}
 	
 	public void preStart() {
@@ -24,7 +31,7 @@ public class Monitor extends ArsUntypedActor {
 			
 			switch(message.getType()) {
 				case MONITORED_EVENT:
-					work();
+					work(message);
 				break;
 				
 				case EVENT_ACKNOWLEDGED:
@@ -39,7 +46,14 @@ public class Monitor extends ArsUntypedActor {
 		}
 	}
 	
-	private void work() throws Exception {
+	private void work(final Message message) throws Exception {
+		final ActorRef monitorRef = getSelf();
+		receiverRestClient.transmitEvent(message, new Callback() {
+			public void onCompletion(int responseCode, String responseData) {
+				monitorRef.tell(new Message(Message.Type.EVENT_ACKNOWLEDGED, message.getPayload()), getSelf());
+			}
+		});
+		
 		// complete work
 		getContext().actorSelection("../tracker").tell(new Message(Message.Type.EVENT_PROCESSED, 1), getSelf());
 	}

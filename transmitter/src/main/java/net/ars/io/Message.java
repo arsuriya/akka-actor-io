@@ -1,8 +1,8 @@
-package net.ars.io.actor;
+package net.ars.io;
 
 
 public class Message {
-	static enum Type {
+	public static enum Type {
 		HEALTH_CHECK,
 		SEND_EVENT,
 		MONITORED_EVENT,
@@ -34,6 +34,11 @@ public class Message {
 	*/
 	public Object getPayload() {
 		return payload;
+	}
+	
+	public String toJson() {
+		return "{\"type\":\"" + this.getType() +
+				"\", \"payload\": \"" + this.getPayload() + "\"}";
 	}
 	
 	public String toString() {

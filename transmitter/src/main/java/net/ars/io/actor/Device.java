@@ -2,6 +2,7 @@ package net.ars.io.actor;
 
 import java.util.concurrent.TimeUnit;
 
+import net.ars.io.Message;
 import akka.actor.ActorRef;
 
 public class Device extends ArsUntypedActor {

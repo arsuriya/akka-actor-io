@@ -1,5 +1,7 @@
 package net.ars.io.actor;
 
+import net.ars.io.Message;
+
 import com.typesafe.config.Config;
 
 public class Tracker extends ArsUntypedActor {
