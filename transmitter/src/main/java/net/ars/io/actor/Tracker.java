@@ -1,4 +1,4 @@
-package net.ars.sample.actor;
+package net.ars.io.actor;
 
 import com.typesafe.config.Config;
 

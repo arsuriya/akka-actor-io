@@ -1,4 +1,4 @@
-package net.ars.sample.actor;
+package net.ars.io.actor;
 
 import scala.concurrent.Await;
 import scala.concurrent.Future;

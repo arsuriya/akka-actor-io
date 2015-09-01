@@ -1,4 +1,4 @@
-package net.ars.sample.actor;
+package net.ars.io.actor;
 
 
 public class Message {

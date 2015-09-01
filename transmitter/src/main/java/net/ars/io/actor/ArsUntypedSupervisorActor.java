@@ -1,4 +1,4 @@
-package net.ars.sample.actor;
+package net.ars.io.actor;
 
 import scala.concurrent.duration.Duration;
 import akka.actor.OneForOneStrategy;
