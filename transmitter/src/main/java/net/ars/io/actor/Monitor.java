@@ -10,9 +10,11 @@ import com.typesafe.config.Config;
 public class Monitor extends ArsUntypedActor {
 	
 	private ReceiverRestClient receiverRestClient;
+	private String trackerPath;
 	
-	public Monitor(Config appConfig, ReceiverRestClient receiverRestClient) {
+	public Monitor(Config appConfig, ReceiverRestClient receiverRestClient, String trackerPath) {
 		this.receiverRestClient = receiverRestClient;
+		this.trackerPath = trackerPath;
 	}
 
 	@Override
@@ -36,7 +38,7 @@ public class Monitor extends ArsUntypedActor {
 	}
 	
 	private void work(final Message message) throws Exception {
-		final ActorSelection tracker = getContext().actorSelection("../tracker");
+		final ActorSelection tracker = getContext().actorSelection(trackerPath);
 		receiverRestClient.transmitEvent(message, new Callback() {
 			public void onCompletion(int responseCode, String responseData) {
 				tracker.tell(new Message(Message.Type.EVENT_ACKNOWLEDGED, message.getPayload()), getSelf());

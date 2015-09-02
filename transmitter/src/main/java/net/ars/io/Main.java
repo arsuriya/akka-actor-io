@@ -10,8 +10,10 @@ import net.ars.io.client.ReceiverRestClientFactory;
 
 import org.slf4j.LoggerFactory;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.routing.FromConfig;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
@@ -54,7 +56,8 @@ public class Main {
 		// ActorRef trackerRef =
 		actorSystem.actorOf(Props.create(Tracker.class, appConfig, processedEventCounter, acknowledgedEventCounter), "tracker");
 		// ActorRef monitorRef =
-		actorSystem.actorOf(Props.create(Monitor.class, appConfig, client),
+		// actorSystem.actorOf(Props.create(Monitor.class, appConfig, client, "../../tracker"),
+		actorSystem.actorOf(FromConfig.getInstance().props(Props.create(Monitor.class, appConfig, client, "../../tracker")),
 				"monitor");
 		// ActorRef mainRef =
 		actorSystem.actorOf(
