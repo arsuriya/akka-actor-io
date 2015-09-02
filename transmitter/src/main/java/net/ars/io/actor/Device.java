@@ -34,9 +34,7 @@ public class Device extends ArsUntypedActor {
 					long startSendTimeNs = System.nanoTime();
 					long endSendTimeNs = System.nanoTime();
 					while(endSendTimeNs - startSendTimeNs < 100L) {
-						for(int i=0; i<10; i++) {
-							monitor.tell(new Message(Message.Type.MONITORED_EVENT, deviceId), getSelf());
-						}
+						monitor.tell(new Message(Message.Type.MONITORED_EVENT, deviceId), getSelf());
 						endSendTimeNs = System.nanoTime();
 					}
 				break;

@@ -2,21 +2,16 @@ package net.ars.io.actor;
 
 import net.ars.io.Message;
 
+import com.codahale.metrics.Counter;
 import com.typesafe.config.Config;
 
 public class Tracker extends ArsUntypedActor {
 
-	public final int THRESHOLD;
-	private int processedEventCount = 0;
+	private Counter processedEventCounter, acknowledgedEventCounter;
 	
-	public Tracker(Config appConfig) {
-		int t = appConfig.getInt("status-update-count");
-		if(t > 0) {
-			THRESHOLD = t;
-		} else {
-			THRESHOLD = 1000;
-		}
-		logger.debug("Status update threshold is : " + THRESHOLD);
+	public Tracker(Config appConfig, Counter processedEventCounter, Counter acknowledgedEventCounter) {
+		this.processedEventCounter = processedEventCounter;
+		this.acknowledgedEventCounter = acknowledgedEventCounter;
 	}
 	
 	@Override
@@ -25,11 +20,11 @@ public class Tracker extends ArsUntypedActor {
 			Message message = (Message)msg;
 			switch(message.getType()) {
 				case EVENT_PROCESSED:
-					processedEventCount++;
-					if(processedEventCount == THRESHOLD) {
-						informNoe();
-						processedEventCount = 0;
-					}
+					processedEventCounter.inc();
+				break;
+				
+				case EVENT_ACKNOWLEDGED:
+					acknowledgedEventCounter.inc();
 				break;
 				
 				default:
@@ -38,10 +33,6 @@ public class Tracker extends ArsUntypedActor {
 		} else {
 			super.handleMessage(msg);
 		}
-	}
-	
-	private void informNoe() throws Exception {
-		getContext().actorSelection("../main-mgr").tell(new Message(Message.Type.PROCESSED_EVENT_COUNT, THRESHOLD), getSelf());
 	}
 	
 }

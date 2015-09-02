@@ -29,7 +29,7 @@ public class OkResource {
     @POST
     @Timed
     public Response accept(String reqBody) throws Exception {
-    	logger.error("In POST - request body [" + reqBody + "] delay would be [" + processDelayMs + "]");
+    	logger.debug("In POST - request body [" + reqBody + "] delay would be [" + processDelayMs + "]");
     	processDelay();
     	return Response.accepted().build();
     }

@@ -41,6 +41,8 @@ public class Main {
 
 		Counter processedEventCounter = registry
 				.counter("processed-events-count");
+		Counter acknowledgedEventCounter = registry
+				.counter("acknowledged-events-count");
 
 		ReceiverRestClient client = ReceiverRestClientFactory
 				.getReceiverRestClient(
@@ -50,13 +52,13 @@ public class Main {
 		ActorSystem actorSystem = ActorSystem.create("ars-akka",
 				actorSystemConfig);
 		// ActorRef trackerRef =
-		actorSystem.actorOf(Props.create(Tracker.class, appConfig), "tracker");
+		actorSystem.actorOf(Props.create(Tracker.class, appConfig, processedEventCounter, acknowledgedEventCounter), "tracker");
 		// ActorRef monitorRef =
 		actorSystem.actorOf(Props.create(Monitor.class, appConfig, client),
 				"monitor");
 		// ActorRef mainRef =
 		actorSystem.actorOf(
-				Props.create(NoE.class, appConfig, processedEventCounter),
+				Props.create(NoE.class, appConfig),
 				"main-mgr");
 
 		System.out.println("Press any key to exit...");
